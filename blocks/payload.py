@@ -11,31 +11,29 @@ import codecs
 from ..utilities.utilities import *
 
 class Payload:
-    data = []
-    signature = ''
-    public_key = ''
+
     def __init__(self, data = [], signature = '',  public_key = ''):
-        self.data = data
-        self.signature = signature
-        self.public_key = public_key
+        self.__data = data
+        self.__signature = signature
+        self.__public_key = public_key
 
     def set_data(self, data):
-        self.data = data
+        self.__data = data
 
     def set_signature(self, signature):
-        self.signature = signature
+        self.__signature = signature
 
     def set_public_key(self, public_key):
-        self.public_key = public_key
+        self.__public_key = public_key
 
     def get_data(self):
-        return self.data
+        return self.__data
 
     def get_signature(self):
-        return self.signature
+        return self.__signature
 
     def get_public_key(self):
-        return self.public_key
+        return self.__public_key
 
     def is_valid(self):
-        return self.public_key.verify(from_base58(self.signature), codecs.decode(get_data_hash(self.data), 'hex'))
+        return self.__public_key.verify(from_base58(self.__signature), codecs.decode(get_data_hash(self.__data), 'hex'))

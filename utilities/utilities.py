@@ -4,6 +4,7 @@
 
 import hashlib
 import base58
+import codecs
 
 def to_base58(s):
     return base58.b58encode_check(s).decode('ascii')
@@ -21,3 +22,6 @@ def generate_userid(vk_byte):
 
 def get_data_hash(data):
     return hashlib.sha256(data.encode('utf-8')).hexdigest()
+
+def get_signature(data,sk):
+    return to_base58(sk.sign(codecs.decode(get_data_hash(data), 'hex')))

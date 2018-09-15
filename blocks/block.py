@@ -6,6 +6,18 @@
 import time
 import hashlib
 import json
+import ecdsa
+from ..utilities.utilities import *
+from .payload import Payload
+
+serversk_string = 'a31fc297be78f5eb37d3d87f3194d3fd241a647b9025b59de1c61b566113d428'
+serversk = ecdsa.SigningKey.from_string(codecs.decode(serversk_string, 'hex'), curve=ecdsa.SECP256k1)
+
+servervk_string = '27a505f67abd3f61882d7840af25346661fe96582af181351cb2e088d2d2c909ffdbc406be350da657974df0fc3dcbc47' \
+                  'cb0ecccc459aed41269dd7b39f6dc59'
+
+servervk = ecdsa.VerifyingKey.from_string(codecs.decode(servervk_string, 'hex'), curve=ecdsa.SECP256k1)
+
 
 class Block:
     '''
@@ -19,7 +31,7 @@ class Block:
 
     '''
 
-    def __init__(self, version  = 0, payload = [], prev_hash = '', timestamp = 0, signature = '', hash_value = '', height =0):
+    def __init__(self, version  = 0, payload = [Payload(),], prev_hash = '', timestamp = 0, signature = '', hash_value = '', height =0):
         self.__version = version
         self.__payload = payload    #payload store data
         self.__prev_hash = prev_hash
@@ -40,16 +52,24 @@ class Block:
 
     def set_timestamp(self, timestamp):
         self.__timestamp = timestamp
+    def get_signature_string(self):
+        payload_string = "".join(self.get_payload())
+        signature_string = self.__prev_hash + str(self.get_timestamp()) + str(self.get_height()) + \
+                           str(self.get_version()) + payload_string
+        return signature_string
 
-    def set_signature(self, signature):
-        self.__signature = signature
+    def get_hash_value_string(self):
+
+        return self.get_signature() + self.get_signature_string()
+
+    def set_signature(self):
+
+        self.__signature = get_signature(self.get_signature_string(),serversk)
 
     def set_hash_value(self):
-        payload_str ="".join(self.__payload)
-        block_string = self.__prev_hash.encode('utf-8') + str(self.__timestamp).encode('utf-8') + str(self.__height).encode('utf-8') + \
-                       str(self.__version).encode('utf-8') + payload_str.encode('utf-8') + self.__signature.encode('utf-8')
 
-        self.__hash_value = hashlib.sha256(block_string).hexdigest()
+
+        self.__hash_value = get_data_hash(str(self.get_hash_value_string()))
 
     def set_height(self, height):
         self.__height = height
@@ -74,4 +94,5 @@ class Block:
 
     def get_height(self):
         return self.__height
+
 

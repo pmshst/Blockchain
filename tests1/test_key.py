@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 # @Author  : Leo Zhao
 import unittest
-import ecdsa
-from ..blocks.key import Key
 
+import ecdsa
+
+from forum.blocks.blocks.key import Key
 
 
 class TestBlock(unittest.TestCase):

@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 # @Author  : Leo Zhao
 import unittest
-from ..blocks.block import Block
-from ..blocks.payload import Payload
-from ..utilities.utilities import *
+
 import ecdsa
 
+from forum.blocks.blocks.block import Block
+from ..blocks.payload import Payload
+from ..utilities.utilities import *
 
 
 class TestBlock(unittest.TestCase):

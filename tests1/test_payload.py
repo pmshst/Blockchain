@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 # @Author  : Leo Zhao
 import unittest
+
 import ecdsa
-import base58
-import codecs
-from ..blocks.payload import Payload
+
+from forum.blocks.blocks.payload import Payload
 from ..utilities.utilities import *
+
 
 class TestPayload(unittest.TestCase):
 

@@ -7,7 +7,7 @@ import time
 import hashlib
 import json
 import ecdsa
-from ..utilities.utilities import *
+from forum.utilities.utilities import *
 from .payload import Payload
 
 serversk_string = 'a31fc297be78f5eb37d3d87f3194d3fd241a647b9025b59de1c61b566113d428'

@@ -8,7 +8,7 @@ import hashlib
 import json
 import ecdsa
 import codecs
-from ..utilities.utilities import *
+from forum.utilities.utilities import *
 
 class Payload:
 

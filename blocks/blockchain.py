@@ -10,12 +10,11 @@ import ecdsa
 import codecs
 import pymongo
 
-from .key import Key
-from .storage import *
-from .block import *
-from .payload import *
-from ..utilities.utilities import *
-
+from forum.utilities.utilities import *
+from forum.blocks.block import Block
+from forum.blocks.payload import Payload
+from forum.blocks.key import Key
+from forum.blocks.storage import *
 
 server_sk_string = 'a31fc297be78f5eb37d3d87f3194d3fd241a647b9025b59de1c61b566113d428'
 server_sk = ecdsa.SigningKey.from_string(codecs.decode(server_sk_string, 'hex'), curve=ecdsa.SECP256k1)
@@ -50,7 +49,7 @@ class Blockchain:
     def get_block_by_hash(self, hash):
         pass
 
-    def create_genesis_payload(self):
+def create_genesis_payload():
         genesis_payload = Payload()
         genesis_payload.set_data('Talk is cheap')
         #print(to_base58(sk.to_string()))
@@ -66,10 +65,10 @@ class Blockchain:
         assert genesis_payload.is_valid()
         return genesis_payload
 
-    def create_genesis_block(self):
+def create_genesis_block():
         genesis_block = Block()
         genesis_block.set_version(1)
-        genesis_payload= self.create_genesis_payload()
+        genesis_payload= create_genesis_payload()
         genesis_block.set_payload([genesis_payload,])
         genesis_block.set_prev_hash('0')
         genesis_block.set_timestamp(1537016400)
@@ -100,3 +99,5 @@ class Blockchain:
         print(block.get_hash_value())
         self.assertNotEqual('', block.get_hash_value())
         '''
+
+blockchain = Blockchain(create_genesis_block())

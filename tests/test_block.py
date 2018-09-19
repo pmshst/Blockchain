@@ -32,11 +32,12 @@ class TestBlock(unittest.TestCase):
          genesis_payload.set_signature(signature)
          assert genesis_payload.is_valid()
 
-         block.set_payload([genesis_payload, ])
-         self.assertEqual([genesis_payload, ], block.get_payload())
 
-         block.set_payload(['D7JRxt4Gr5hPKXequ7zYfyuv56xj3sqY6',])
-         self.assertEqual(['D7JRxt4Gr5hPKXequ7zYfyuv56xj3sqY6',], block.get_payload())
+         '''
+         payload=create_genesis_block()
+
+         block.set_payload([payload,])
+         self.assertEqual([payload,], block.get_payload())
 
 
          block.set_prev_hash('GKud7tATKAtSkfVEeLA9PHcTMeJ9K51Uv')
@@ -55,7 +56,7 @@ class TestBlock(unittest.TestCase):
          block.set_hash_value()
          print(block.get_hash_value())
          #self.assertNotEqual('', block.get_hash_value())
-
+         '''
 
          '''self.payload = payload  # payload store data
          self.prev_hash = prev_hash

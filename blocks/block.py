@@ -33,7 +33,7 @@ class Block:
 
     def __init__(self, version  = 0, payload = [Payload(),], prev_hash = '', timestamp = 0, signature = '', hash_value = '', height =0):
         self.__version = version
-        self.__payload = payload    #payload store data
+        self.__payload = [Payload(),]    #payload store data
         self.__prev_hash = prev_hash
         self.__timestamp =timestamp
         self.__signature = signature
@@ -52,19 +52,44 @@ class Block:
 
     def set_timestamp(self, timestamp):
         self.__timestamp = timestamp
+
+    def get_payload_string(self):
+        list_payload = self.get_payload()
+        list_payload_data=[]
+        it = iter(list_payload)
+
+        # 循环
+        while True:
+            try:
+                payload = next(it)
+                dict_payload = {}
+                dict_payload['public_key']=payload.get_public_key_string_to_base58()
+                dict_payload['data'] = payload.get_data()
+                dict_payload['signature'] = payload.get_signature()
+                list_payload_data.append(dict_payload)
+            except StopIteration:
+                break
+        #[int(i) for i in tmp_list]
+        return ("".join([ str(i) for i  in list_payload_data]))
+
+
     def get_signature_string(self):
-        payload_string = "".join(self.get_payload())
-        signature_string = self.__prev_hash + str(self.get_timestamp()) + str(self.get_height()) + \
-                           str(self.get_version()) + payload_string
-        return signature_string
+        list=[]
+        list.append(self.get_payload_string())
+        list.append(str(self.get_timestamp()))
+        list.append(str(self.get_prev_hash()))
+        list.append(str(self.get_height()))
+        list.append(str(self.get_version()))
+
+        return str(''.join(list))
 
     def get_hash_value_string(self):
 
-        return self.get_signature() + self.get_signature_string()
+        return str(self.get_signature_string())
 
     def set_signature(self):
 
-        self.__signature = get_signature(self.get_signature_string(),serversk)
+        self.__signature = get_signature(self.get_signature_string(), serversk)
 
     def set_hash_value(self):
 
@@ -95,4 +120,13 @@ class Block:
     def get_height(self):
         return self.__height
 
-
+    def dict(self):
+        dict_block={'height': self.get_height(),
+                 'timestamp': self.get_timestamp(),
+                 'data': self.get_payload_string(),
+                 'prev_hash': self.get_prev_hash(),
+                 'signature': self.get_signature(),
+                 'hash_value': self.get_hash_value(),
+                 'version': self.get_version(),
+                    }
+        return dict_block

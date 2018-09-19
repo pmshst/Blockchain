@@ -2,12 +2,6 @@
 # -*- coding: utf-8 -*-
 # @Author  : Leo Zhao
 
-
-import time
-import hashlib
-import json
-import ecdsa
-import codecs
 from forum.utilities.utilities import *
 
 class Payload:
@@ -34,6 +28,9 @@ class Payload:
 
     def get_public_key(self):
         return self.__public_key
+
+    def get_public_key_string_to_base58(self):
+        return to_base58(self.__public_key.to_string())
 
     def is_valid(self):
         return self.__public_key.verify(from_base58(self.__signature), codecs.decode(get_data_hash(self.__data), 'hex'))

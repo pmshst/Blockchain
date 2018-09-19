@@ -175,11 +175,12 @@ for i in range(10):
 
 blockchain.get_storage().all_blocks()
 print('get by hash')
-blockchain.get_storage().get_block_by_height(1)
-blockchain.get_storage().get_block_by_height(2)
+block_from_db1 =blockchain.get_storage().get_block_by_height(1)
+block_from_db2 =blockchain.get_storage().get_block_by_height(2)
 block_from_db = blockchain.get_storage().get_block_by_hash(genesis_block.get_hash_value())
 print('after_db', genesis_block.get_hash_value())
 print(blockchain.is_valid(block_from_db))
+print(blockchain.is_valid(block_from_db2))
 
 #print_block(block)
 

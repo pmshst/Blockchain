@@ -10,19 +10,6 @@ import ecdsa
 from forum.utilities.utilities import *
 from .payload import Payload
 
-serversk_string = 'a31fc297be78f5eb37d3d87f319' \
-                  '4d3fd241a647b9025b59de1c61b566113d428'
-serversk = ecdsa.SigningKey.from_string(codecs.decode(serversk_string, 'hex'),
-                                        curve=ecdsa.SECP256k1)
-
-servervk_string = '27a505f67abd3f61882d7840af25346661fe96582' \
-                  'af181351cb2e088d2d2c909ffdbc406be350da657974df0fc3dcbc47' \
-                  'cb0ecccc459aed41269dd7b39f6dc59'
-
-servervk = ecdsa.VerifyingKey.from_string(
-    codecs.decode(servervk_string, 'hex'),
-    curve=ecdsa.SECP256k1)
-
 
 class Block:
     '''
@@ -46,49 +33,55 @@ class Block:
         self.__hash_value = hash_value
         self.__height = height
 
-    def set_version(self, version):
+    @property
+    def version(self):
+        return self.__version
+
+    @version.setter
+    def version(self, version):
 
         self.__version = version
 
-    def set_data(self, payload):
-        self.__data = payload
-
-    def set_prev_hash(self, prev_hash):
-        self.__prev_hash = prev_hash
-
-    def set_timestamp(self, timestamp):
-        self.__timestamp = timestamp
-
-    def get_data(self):
+    @property
+    def data(self):
         return self.__data
 
-    def get_payload_string(self):
-        list_payload = self.get_payload()
-        list_payload_data = []
-        it = iter(list_payload)
+    @data.setter
+    def data(self, data):
+        self.__data = data
 
-        # 循环
-        while True:
-            try:
-                payload = next(it)
-                dict_payload = {}
-                dict_payload['public_key'] = \
-                    payload.get_public_key_string_to_base58()
-                dict_payload['data'] = payload.get_data()
-                dict_payload['signature'] = payload.get_signature()
-                list_payload_data.append(dict_payload)
-            except StopIteration:
-                break
-        return ("".join([str(i) for i in list_payload_data]))
+    @property
+    def prev_hash(self):
+        return self.__prev_hash
+
+    @prev_hash.setter
+    def prev_hash(self, prev_hash):
+        self.__prev_hash = prev_hash
+
+    @property
+    def timestamp(self):
+        return self.__timestamp
+
+    @timestamp.setter
+    def timestamp(self, timestamp):
+        self.__timestamp = timestamp
 
     def get_signature_string(self):
         tmp_list = []
-        tmp_list.append(self.get_data().decode('utf-8'))
-        tmp_list.append(str(self.get_timestamp()))
-        tmp_list.append(str(self.get_prev_hash()))
-        tmp_list.append(str(self.get_height()))
-        tmp_list.append(str(self.get_version()))
+        tmp_list.append(self.data.decode('utf-8'))
+        tmp_list.append(str(self.timestamp))
+        tmp_list.append(str(self.prev_hash))
+        tmp_list.append(str(self.height))
+        tmp_list.append(str(self.version))
         return str(''.join(tmp_list))
+
+    @property
+    def height(self):
+        return self.__height
+
+    @height.setter
+    def height(self, height):
+        self.__height = height
 
     def get_hash_value_string(self):
 
@@ -101,38 +94,29 @@ class Block:
     def set_hash_value(self):
         self.__hash_value = get_data_hash(str(self.get_hash_value_string()))
 
-    def set_height(self, height):
-        self.__height = height
-
-    def get_version(self):
-        return self.__version
-
-    def get_payload(self):
-        return self.__data
-
-    def get_prev_hash(self):
-        return self.__prev_hash
-
-    def get_timestamp(self):
-        return self.__timestamp
-
     def get_signature(self):
         return self.__signature
 
     def get_hash_value(self):
         return self.__hash_value
 
-    def get_height(self):
-        return self.__height
-
     def dict(self):
         dict_block = {
-            'height': self.get_height(),
-            'timestamp': self.get_timestamp(),
-            'data': self.get_data(),
-            'prev_hash': self.get_prev_hash(),
+            'height': self.height,
+            'timestamp': self.timestamp,
+            'data': self.data,
+            'prev_hash': self.prev_hash,
             'signature': self.get_signature(),
             'hash_value': self.get_hash_value(),
-            'version': self.get_version(),
+            'version': self.version,
                     }
         return dict_block
+
+    def set_block_by_dict(self, dict_block):
+        self.__height = dict_block['height']
+        self.__timestamp = dict_block['timestamp']
+        self.__data = dict_block['data']
+        self.__prev_hash = dict_block['prev_hash']
+        self.__signature = dict_block['signature']
+        self.__hash_value = dict_block['hash_value']
+        self.__version = dict_block['version']

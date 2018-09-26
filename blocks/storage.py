@@ -4,9 +4,6 @@
 import pymongo
 from interface import implements, Interface
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-mydb = myclient["blockchainDB"]
-
 
 class Storage(Interface):
 
@@ -30,9 +27,13 @@ class Storage(Interface):
 
 
 class ChainStorageDatabase(implements(Storage)):
+
     def __init__(self, chian_id):
-        self.blocks = mydb["chain"+str(chian_id)]
-        self.blocks.drop()
+        self.myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+        self.mydb = self.myclient["blockchainDB"]
+        self.blocks = self.mydb["chain"+str(chian_id)]
+        # self.blocks.drop()
+        # print(self.mydb.collection_names())
 
     def save(self):
         pass
@@ -45,6 +46,11 @@ class ChainStorageDatabase(implements(Storage)):
     def add_block(self, block):
         self.blocks.insert_one(block.dict())
 
+    def update_block(self, block):
+        dict = block.dict()
+        self.blocks.update({'height': dict['height']},
+                           {'$set': dict})
+
     def all_blocks(self):
         list_bloks = []
         for x in self.blocks.find():
@@ -55,13 +61,13 @@ class ChainStorageDatabase(implements(Storage)):
     def get_block_by_height(self, height):
         query = {"height": height}
         block = self.blocks.find_one(query)
-        print(block)
+        # print(block)
         return block
 
     def get_block_by_hash(self, hash):
         query = {"hash_value": hash}
         block = self.blocks.find_one(query)
-        print(block)
+        # print(block)
         return block
 
 
@@ -87,20 +93,24 @@ class ChainStorageFile(implements(Storage)):
 
 class KeyStorageDatabase:
     def __init__(self):
-        self.keys = mydb["keys"]
-        self.keys.drop()
+        self.myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+        self.mydb = self.myclient["keysDB"]
+        self.keys = self.mydb["keys"]
+        # self.keys.drop()
+        # print(self.mydb.collection_names())
 
-    def get_key_nums(self):
+    def get_key_num(self):
         key_nums = self.keys.find().count()
         print(key_nums)
         return key_nums
 
     def get_key(self, chain_id):
         # key_id is chain id
-        query = {"key_id": chain_id}
+        query = {'key_id': chain_id}
         key = self.keys.find_one(query)
         print(key)
         return key
 
     def add_key(self, key):
+        print(key.dict())
         self.keys.insert_one(key.dict())

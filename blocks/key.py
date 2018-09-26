@@ -25,7 +25,7 @@ class Key:
         return self.__key_id
 
     @key_id.setter
-    def id(self, key_id):
+    def key_id(self, key_id):
         '''
         set chain_id
         :param id:
@@ -46,13 +46,24 @@ class Key:
         return self.__secret_key
 
     @secret_key.setter
-    def set_secret_key(self, secret_key):
+    def secret_key(self, secret_key):
         self.__secret_key = secret_key
 
     def dict(self):
         dict_key = {
-            'key_id': self.id,
+            'key_id': self.key_id,
             'pk': bytes(to_base58(self.public_key.to_string()), 'utf-8'),
             'sk': bytes(to_base58(self.secret_key.to_string()), 'utf-8'),
                     }
         return dict_key
+
+    def set_key_by_dict(self, dict={}):
+        pk_string = from_base58(dict['pk'].decode('utf-8'))
+        self.public_key = ecdsa.VerifyingKey.from_string(
+            pk_string,
+            curve=ecdsa.SECP256k1)
+        sk_string = from_base58(dict['sk'].decode('utf-8'))
+        self.secret_key = ecdsa.SigningKey.from_string(
+            sk_string,
+            curve=ecdsa.SECP256k1)
+        self.key_id = dict['key_id']

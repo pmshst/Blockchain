@@ -14,7 +14,7 @@ class TestBlock(unittest.TestCase):
 
     def test_create_block(self):
         block = Block()
-        block.set_version(0)
+        block.version(0)
         self.assertEqual(0, block.get_version())
         genesis_payload = Payload()
         genesis_payload.set_data('Talk is cheap')
